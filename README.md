@@ -1,2 +1,2 @@
-# openbookmark
-simple open bookmark service
+# myversions
+App版本管理
