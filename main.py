@@ -47,5 +47,6 @@ def something_new(lastedId):
     """
     获取是否有新的文章
     """
-    return JSONResponse({'rs': BookmarkService.something_new(lastedId)})
+    has_new = BookmarkService.something_new(lastedId)
+    return BaseResponse(rs=has_new, code=200 if has_new else 404, info="有更新" if has_new else "没更新")
 
