@@ -72,9 +72,8 @@ class BookmarkService(BaseService):
                                 post_count=1, hidden=0)
             insert(bookmark)
             commit()
-            conn = cls.redis_conn()
-            conn.set('NEWEST:alva', str(bookmark.id))
-            conn.close()
+            with cls.redis_conn() as conn:
+                conn.set('NEWEST:alva', str(bookmark.id))
         else:
             bookmark.post_count+=1
             commit()
@@ -97,8 +96,7 @@ class BookmarkService(BaseService):
 
     @classmethod
     def something_new(cls, lastedId):
-        conn = cls.redis_conn()
-        newest = conn.get('NEWEST:alva')
-        conn.close()
+        with cls.redis_conn() as conn:
+            newest = conn.get('NEWEST:alva')
         return int(newest) > int(lastedId) if newest else False
 
