@@ -1,4 +1,5 @@
 # coding=utf8
+import logging
 import random
 import time
 from typing import List
@@ -96,7 +97,10 @@ class BookmarkService(BaseService):
 
     @classmethod
     def something_new(cls, lastedId):
+        logging.error(f'newest: {lastedId}')
         with cls.redis_conn() as conn:
+            logging.error('start redis')
             newest = conn.get('NEWEST:alva')
+            logging.error(f'get value {newest}')
         return int(newest) > int(lastedId) if newest else False
 
