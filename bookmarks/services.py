@@ -20,6 +20,7 @@ class BookMarkForm(BaseModel):
 
 
 class BookmarkMode(BaseModel):
+    bookmark_id: int = Field(0, title=u"书签ID")
     domain: str = Field(None, title=u"域名")
     url: str = Field(None, title=u"网址")
     title: str = Field(None, title=u"网页标题")
@@ -46,6 +47,7 @@ class BookmarkService(BaseService):
 
     def toResponse(self, bookmark):
         return BookmarkMode(
+                bookmark_id=bookmark.id,
                 domain=bookmark.domain,
                 url=bookmark.url,
                 title=bookmark.title,
