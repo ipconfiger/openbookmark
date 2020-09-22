@@ -6,6 +6,9 @@ from service import BaseService, BaseResponse
 from models import BookMark
 from pydantic import BaseModel, Field
 from database import insert, delete, commit
+import redis
+from configs import settings
+
 __author__ = 'Alexander.Li'
 
 
@@ -68,9 +71,13 @@ class BookmarkService(BaseService):
             bookmark = BookMark(domain=domain, title=title, base_url=base_url, url=no_slash_url, image_url=image_url,
                                 post_count=1, hidden=0)
             insert(bookmark)
+            commit()
+            conn = cls.redis_conn()
+            conn.set('NEWEST:alva', str(bookmark.id))
+            conn.close()
         else:
             bookmark.post_count+=1
-        commit()
+            commit()
         return BookmarkService().withId(bookmark.id)
 
     @classmethod
@@ -85,7 +92,13 @@ class BookmarkService(BaseService):
         )
 
     @classmethod
+    def redis_conn(cls):
+        return redis.Redis(host=settings.REDIS_HOST, port=settings.REDIS_PORT)
+
+    @classmethod
     def something_new(cls, lastedId):
-        newest = BookMark.filter(BookMark.hidden < 1).order_by(BookMark.id.desc()).first()
-        return newest.id > int(lastedId)
+        conn = cls.redis_conn()
+        newest = conn.get('NEWEST:alva')
+        conn.close()
+        return int(newest) > int(lastedId) if newest else False
 
