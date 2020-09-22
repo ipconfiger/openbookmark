@@ -73,8 +73,8 @@ class BookmarkService(BaseService):
                                 post_count=1, hidden=0)
             insert(bookmark)
             commit()
-            with cls.redis_conn() as conn:
-                conn.set('NEWEST:alva', str(bookmark.id))
+            conn = cls.redis_conn()
+            conn.set('NEWEST:alva', str(bookmark.id))
         else:
             bookmark.post_count+=1
             commit()
@@ -97,10 +97,7 @@ class BookmarkService(BaseService):
 
     @classmethod
     def something_new(cls, lastedId):
-        logging.error(f'newest: {lastedId}')
-        with cls.redis_conn() as conn:
-            logging.error('start redis')
-            newest = conn.get('NEWEST:alva')
-            logging.error(f'get value {newest}')
+        conn = cls.redis_conn()
+        newest = conn.get('NEWEST:alva')
         return int(newest) > int(lastedId) if newest else False
 
