@@ -1,5 +1,6 @@
 # coding=utf8
 from fastapi import FastAPI, Depends, Response, status
+from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from configs import settings
 from service import BaseResponse
@@ -39,3 +40,12 @@ def fetch_many_bookmarks():
     获取书签列表
     """
     return BookmarkService.fetchMany()
+
+
+@app.get('/check/{lastedId}')
+def something_new(lastedId):
+    """
+    获取是否有新的文章
+    """
+    return JSONResponse({'rs': BookmarkService.something_new(lastedId)})
+

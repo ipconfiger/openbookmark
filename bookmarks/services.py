@@ -83,3 +83,9 @@ class BookmarkService(BaseService):
         return BookmarkListResponse(
             bookmarks=[this.toResponse(bookmark) for bookmark in bookmarks]
         )
+
+    @classmethod
+    def something_new(cls, lastedId):
+        newest = BookMark.filter(BookMark.hidden < 1).order_by(BookMark.id.desc()).first()
+        return newest.id > int(lastedId)
+
